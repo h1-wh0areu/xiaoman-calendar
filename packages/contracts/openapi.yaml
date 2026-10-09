@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Xiaoman Schedule Avatar API
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000/v1
+paths:
+  /auth/sms/send:
+    post:
+      summary: Send SMS code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone: { type: string }
+      responses:
+        '200':
+          description: OK
+  /auth/sms/verify:
+    post:
+      summary: Verify SMS (dev code 000000)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, code]
+              properties:
+                phone: { type: string }
+                code: { type: string }
+      responses:
+        '200':
+          description: JWT pair
+  /brief/morning:
+    get:
+      summary: Morning brief
+      parameters:
+        - in: query
+          name: date
+          schema: { type: string }
+      responses:
+        '200':
+          description: Brief
+  /events:
+    get:
+      summary: List events
+      responses:
+        '200':
+          description: Events
+    post:
+      summary: Create event
+      responses:
+        '201':
+          description: Created
+  /conflicts:
+    get:
+      summary: List conflicts
+      responses:
+        '200':
+          description: Conflicts
+  /conflicts/{id}/choose:
+    post:
+      summary: Choose conflict option
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sign-off ticket or applied
+  /sign-off/{id}/approve:
+    post:
+      summary: Approve sign-off
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Approved

@@ -1,0 +1,31 @@
+{
+  "name": "xiaoman",
+  "private": true,
+  "version": "0.1.0",
+  "description": "日程分身 · 小满 — 跨端数字分身日历",
+  "scripts": {
+    "dev:api": "pnpm --filter @xiaoman/api dev",
+    "dev:web": "pnpm --filter @xiaoman/web dev",
+    "dev:mp": "pnpm --filter @xiaoman/miniprogram dev:weapp",
+    "build:api": "pnpm --filter @xiaoman/api build",
+    "build:web": "pnpm --filter @xiaoman/web build",
+    "build:mp": "pnpm --filter @xiaoman/miniprogram build:weapp",
+    "build:all": "bash ./build_all.sh",
+    "build:all:web": "bash ./build_all.sh --skip-flutter --only api,web,miniprogram,core",
+    "test": "pnpm --filter @xiaoman/core test",
+    "test:api": "pnpm --filter @xiaoman/api test",
+    "seed": "pnpm --filter @xiaoman/api seed"
+  },
+
+
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "webpack": "5.91.0"
+    }
+  }
+}
+

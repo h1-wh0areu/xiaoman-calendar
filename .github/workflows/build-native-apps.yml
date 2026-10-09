@@ -1,0 +1,137 @@
+# 在官方 macOS / Windows runner 上编译 Flutter 原生安装包
+# 触发：手动 / tag / 推送到 main 且改动了 Flutter 工程
+name: Build native apps
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+    branches: [main, master]
+    paths:
+      - 'apps/flutter_app/**'
+      - '.github/workflows/build-native-apps.yml'
+      - 'build_all.sh'
+
+env:
+  PUB_HOSTED_URL: https://pub.flutter-io.cn
+  FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+  FLUTTER_VERSION: '3.35.3'
+
+jobs:
+  macos-ios:
+    name: macOS + iOS
+    runs-on: macos-14
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: CocoaPods
+        run: |
+          export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+          gem install cocoapods --no-document || sudo gem install cocoapods --no-document
+          pod --version
+
+      - name: Pub get
+        working-directory: apps/flutter_app
+        run: |
+          flutter config --no-analytics
+          flutter pub get
+          flutter precache --ios --macos
+
+      - name: Build macOS
+        working-directory: apps/flutter_app
+        run: |
+          flutter build macos --release
+          APP="$(find build/macos/Build/Products/Release -maxdepth 1 -name '*.app' | head -1)"
+          test -n "$APP" && test -d "$APP"
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/macos"
+          VERSION=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | cut -d+ -f1)
+          ditto -c -k --sequesterRsrc --keepParent "$APP" \
+            "$GITHUB_WORKSPACE/artifacts/macos/xiaoman-${VERSION}-macos.app.zip"
+          # DMG
+          STAGE=$(mktemp -d)
+          cp -R "$APP" "$STAGE/"
+          ln -s /Applications "$STAGE/Applications"
+          hdiutil create -volname "小满" -srcfolder "$STAGE" -ov -format UDZO \
+            "$GITHUB_WORKSPACE/artifacts/macos/xiaoman-${VERSION}-macos.dmg"
+          rm -rf "$STAGE"
+          ls -lh "$GITHUB_WORKSPACE/artifacts/macos"
+
+      - name: Build iOS (no codesign)
+        working-directory: apps/flutter_app
+        run: |
+          export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
+          # 无 Apple 分发证书时打未签名 Runner.app；有证书可改为 flutter build ipa
+          flutter build ios --release --no-codesign
+          APP="build/ios/iphoneos/Runner.app"
+          test -d "$APP"
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/ios"
+          VERSION=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | cut -d+ -f1)
+          ditto -c -k --sequesterRsrc --keepParent "$APP" \
+            "$GITHUB_WORKSPACE/artifacts/ios/xiaoman-${VERSION}-Runner.app.zip"
+          # 尝试 ipa（无证书时可能失败，忽略）
+          flutter build ipa --release --no-tree-shake-icons \
+            --export-method development 2>/dev/null \
+            && cp build/ios/ipa/*.ipa "$GITHUB_WORKSPACE/artifacts/ios/" || true
+          ls -lh "$GITHUB_WORKSPACE/artifacts/ios"
+
+      - name: Upload macOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: xiaoman-macos
+          path: artifacts/macos/
+          if-no-files-found: error
+
+      - name: Upload iOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: xiaoman-ios
+          path: artifacts/ios/
+          if-no-files-found: error
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Build Windows
+        working-directory: apps/flutter_app
+        shell: bash
+        run: |
+          flutter config --no-analytics
+          flutter pub get
+          flutter build windows --release
+          WIN_DIR="build/windows/x64/runner/Release"
+          [[ -d "$WIN_DIR" ]] || WIN_DIR="build/windows/runner/Release"
+          test -d "$WIN_DIR"
+          VERSION=$(grep '^version:' pubspec.yaml | head -1 | awk '{print $2}' | cut -d+ -f1)
+          mkdir -p "$GITHUB_WORKSPACE/artifacts/windows"
+          (
+            cd "$WIN_DIR"
+            7z a -tzip "$GITHUB_WORKSPACE/artifacts/windows/xiaoman-${VERSION}-windows.zip" . \
+              || powershell -Command "Compress-Archive -Path * -DestinationPath '$GITHUB_WORKSPACE/artifacts/windows/xiaoman-${VERSION}-windows.zip'"
+          )
+          ls -lh "$GITHUB_WORKSPACE/artifacts/windows"
+
+      - name: Upload Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: xiaoman-windows
+          path: artifacts/windows/
+          if-no-files-found: error

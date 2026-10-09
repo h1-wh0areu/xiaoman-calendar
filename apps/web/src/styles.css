@@ -1,0 +1,113 @@
+@import '@xiaoman/design-tokens/index.css';
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: var(--xm-font);
+  color: var(--xm-text);
+  background: linear-gradient(165deg, #f7f9fc 0%, #ffffff 45%, #eef4ff 100%);
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.rail {
+  padding: 28px 16px;
+  border-right: 1px solid var(--xm-border);
+  background: rgba(255,255,255,.72);
+  backdrop-filter: blur(8px);
+}
+
+.brand {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+.brand-sub { color: var(--xm-text-secondary); font-size: 13px; margin-bottom: 28px; }
+
+.nav a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--xm-text-secondary);
+  text-decoration: none;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.nav a.active, .nav a:hover {
+  background: var(--xm-primary-soft);
+  color: var(--xm-primary);
+}
+
+.main { padding: 28px 36px 48px; }
+
+h1 { font-size: 28px; margin: 0 0 8px; }
+.muted { color: var(--xm-text-secondary); }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--xm-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0;
+}
+.card.warn { border-color: var(--xm-conflict); }
+.card.danger { border-color: var(--xm-danger); }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f2f2f2;
+}
+.bar { width: 4px; height: 38px; border-radius: 2px; }
+.badge {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--xm-primary-soft);
+  color: var(--xm-primary);
+}
+.badge.decision { background: #fff3e0; color: var(--xm-conflict); }
+
+button, .btn {
+  appearance: none;
+  border: none;
+  background: var(--xm-primary);
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+button.secondary {
+  background: transparent;
+  color: var(--xm-success);
+  border: 1px solid var(--xm-success);
+}
+
+.phone-frame {
+  max-width: 420px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 28px;
+  border: 1px solid var(--xm-border);
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(30, 64, 120, 0.08);
+}
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .rail { border-right: none; border-bottom: 1px solid var(--xm-border); }
+  .nav { display: flex; gap: 6px; overflow-x: auto; }
+}

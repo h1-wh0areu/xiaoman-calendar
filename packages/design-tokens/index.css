@@ -1,0 +1,20 @@
+:root {
+  --xm-primary: #3b82f6;
+  --xm-primary-soft: #e8f0fe;
+  --xm-conflict: #f59a23;
+  --xm-danger: #e5484d;
+  --xm-success: #22a06b;
+  --xm-text: #1a1a1a;
+  --xm-text-secondary: #8a8a8a;
+  --xm-border: #ebebeb;
+  --xm-bg: #ffffff;
+  --xm-bg-muted: #f5f5f5;
+  --xm-domain-work: #3b82f6;
+  --xm-domain-family: #f59a23;
+  --xm-domain-document: #e5484d;
+  --xm-domain-birthday: #e879a9;
+  --xm-domain-study: #22a06b;
+  --xm-domain-health: #8b5cf6;
+  --xm-radius-md: 12px;
+  --xm-font: "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+}

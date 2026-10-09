@@ -1,0 +1,17 @@
+.page { padding: 20px; }
+.title { font-size: 22px; font-weight: 700; display: block; }
+.sub { color: #8a8a8a; font-size: 13px; margin: 6px 0 12px; display: block; }
+.banner {
+  border: 1px solid #f59a23;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+.bannerTitle { color: #f59a23; font-weight: 700; display: block; margin-bottom: 4px; }
+.row { display: flex; align-items: center; padding: 10px 0; }
+.bar { width: 4px; height: 36px; border-radius: 2px; margin-right: 10px; }
+.time { width: 48px; font-weight: 600; font-size: 13px; }
+.rowTitle { flex: 1; font-size: 14px; }
+.badge { font-size: 12px; padding: 2px 6px; border-radius: 6px; background: #e8f0fe; color: #3b82f6; }
+.badge.decision, .badge.conflict { background: #fff3e0; color: #f59a23; }
+.closing { margin-top: 20px; font-weight: 700; font-size: 16px; display: block; }

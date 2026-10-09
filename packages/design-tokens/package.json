@@ -1,0 +1,12 @@
+{
+  "name": "@xiaoman/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "main": "tokens.json",
+  "exports": {
+    ".": "./tokens.json",
+    "./index.css": "./index.css",
+    "./tokens.json": "./tokens.json"
+  },
+  "files": ["tokens.json", "index.css"]
+}
